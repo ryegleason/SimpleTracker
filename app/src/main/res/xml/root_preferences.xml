@@ -1,0 +1,36 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="Notifications">
+
+        <EditTextPreference
+            app:defaultValue="4"
+            app:key="ask_period"
+            app:title="Approximate hours between notifications"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="Reporting">
+        <EditTextPreference
+            android:defaultValue="6"
+            android:key="scale_value"
+            android:selectAllOnFocus="false"
+            android:singleLine="false"
+            android:title="@string/scale_values"
+            app:useSimpleSummaryProvider="true" />
+        <EditTextPreference
+            android:key="tags"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Tags" />
+    </PreferenceCategory>
+    <PreferenceCategory app:title="Export">
+
+        <Preference
+            app:key="export"
+            app:title="Export DB" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

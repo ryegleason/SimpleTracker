@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_survey"
+        android:icon="@drawable/baseline_ballot_24"
+        android:title="@string/title_survey" />
+
+    <item
+        android:id="@+id/navigation_wake"
+        android:icon="@drawable/baseline_bedtime_24"
+        android:title="@string/title_wake" />
+
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/baseline_settings_24"
+        android:title="@string/title_settings" />
+
+
+</menu>
