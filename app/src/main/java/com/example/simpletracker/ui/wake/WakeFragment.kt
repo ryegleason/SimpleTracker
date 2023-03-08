@@ -1,5 +1,9 @@
 package com.example.simpletracker.ui.wake
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,10 +12,12 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.example.simpletracker.AlarmBroadcastReciever
 import com.example.simpletracker.databinding.FragmentWakeBinding
 import com.example.simpletracker.db.EventDatabase
 import com.example.simpletracker.db.SleepEvent
 import com.example.simpletracker.db.getDatabaseSingleton
+import com.example.simpletracker.setAlarm
 import java.util.Date
 
 class WakeFragment : Fragment() {
@@ -46,6 +52,16 @@ class WakeFragment : Fragment() {
             button.text = it
         }
         button.setOnClickListener {
+            if (wakeViewModel.isAwake) {
+                val intent = Intent(activity, AlarmBroadcastReciever::class.java)
+                intent.action = "com.example.simpletracker.ALARM_BROADCAST"
+                intent.flags = Intent.FLAG_INCLUDE_STOPPED_PACKAGES
+                val pendingIntent = PendingIntent.getBroadcast(activity, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+                val alarmManager = activity!!.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                alarmManager.cancel(pendingIntent)
+            } else {
+                setAlarm(activity!!, true)
+            }
             eventDatabase.sleepEventDao().insert(SleepEvent(Date(), !wakeViewModel.isAwake))
             wakeViewModel.setSleepStatus(!wakeViewModel.isAwake)
         }

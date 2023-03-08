@@ -1,6 +1,7 @@
 package com.example.simpletracker
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -24,7 +25,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.preference.PreferenceManager
 import com.example.simpletracker.databinding.ActivityMainBinding
+import java.util.*
 
 
 const val CHANNEL_ID = "SURVEY_REMINDER"
@@ -71,19 +74,5 @@ class MainActivity : AppCompatActivity() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
-
-        setAlarm(System.currentTimeMillis() + 1000 * 10)
-    }
-
-
-    private fun setAlarm(timeInMillis: Long) {
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmBroadcastReciever::class.java)
-        intent.action = "com.example.simpletracker.ALARM_BROADCAST"
-        intent.flags = Intent.FLAG_INCLUDE_STOPPED_PACKAGES
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeInMillis, pendingIntent)
-        Toast.makeText(this, "Alarm is set", Toast.LENGTH_SHORT).show()
-        Log.d("simpletracker", "alarm set")
     }
 }

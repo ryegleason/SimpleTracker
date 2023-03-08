@@ -1,21 +1,21 @@
 package com.example.simpletracker
 
-import android.Manifest
+import android.app.Activity
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.util.Log
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.preference.PreferenceManager
+import java.util.*
 
+const val MS_IN_HOUR : Long = 3600000L
 class AlarmBroadcastReciever : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("simpletracker", "alarm went off")
-        Toast.makeText(context, "Alarm get", Toast.LENGTH_SHORT).show()
         // Create an explicit intent for an Activity in your app
         val surveyIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -48,4 +48,25 @@ class AlarmBroadcastReciever : BroadcastReceiver() {
         }
 
     }
+}
+
+fun setAlarm(activity: Activity, isWakeup: Boolean) {
+    val alarmManager = activity.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    val intent = Intent(activity, AlarmBroadcastReciever::class.java)
+    intent.action = "com.example.simpletracker.ALARM_BROADCAST"
+    intent.flags = Intent.FLAG_INCLUDE_STOPPED_PACKAGES
+    val pendingIntent = PendingIntent.getBroadcast(activity, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
+
+    val random = Random()
+    val timeUntilAlarm: Long = if (isWakeup) {
+        ((0.25 + random.nextDouble() * 1.75) * MS_IN_HOUR).toLong()
+    } else {
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        val period: Long = sharedPreferences.getString("ask_period", "4")!!.toLong() * MS_IN_HOUR
+        period + (random.nextGaussian() * 2.0/3.0 * period).toLong()
+    }
+
+    alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeUntilAlarm, pendingIntent)
+    Log.d("simpletracker", "alarm set")
 }

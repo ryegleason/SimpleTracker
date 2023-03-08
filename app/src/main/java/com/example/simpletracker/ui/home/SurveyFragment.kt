@@ -6,9 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.TextView
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,6 +18,7 @@ import androidx.preference.PreferenceManager
 import com.example.simpletracker.databinding.FragmentSurveyBinding
 import com.example.simpletracker.db.SurveyEvent
 import com.example.simpletracker.db.getDatabaseSingleton
+import com.example.simpletracker.setAlarm
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -32,13 +35,15 @@ class SurveyFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val surveyViewModel = ViewModelProvider(this).get(SurveyViewModel::class.java)
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity!!)
 
         _binding = FragmentSurveyBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val eventDatabase = getDatabaseSingleton(context)
+
+        val surveyQuestion: TextView = binding.surveyQuestion
+        surveyQuestion.text = sharedPreferences.getString("survey_question", "?")
 
         val submitButton: Button = binding.submitButton
 
@@ -85,6 +90,7 @@ class SurveyFragment : Fragment() {
                 }
             }
             eventDatabase!!.surveyEventDao().insert(SurveyEvent(Date(), seekBar.progress, activeTags))
+            setAlarm(activity!!, false)
             submitButton.isEnabled = false
         }
 

@@ -16,10 +16,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sampleHeader" />
+        app:layout_constraintTop_toBottomOf="@+id/surveyQuestion" />
 
     <TextView
-        android:id="@+id/sampleHeader"
+        android:id="@+id/surveyQuestion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
