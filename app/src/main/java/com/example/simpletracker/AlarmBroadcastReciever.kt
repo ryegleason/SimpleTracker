@@ -11,6 +11,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.preference.PreferenceManager
 import java.util.*
+import kotlin.math.max
 
 const val MS_IN_HOUR : Long = 3600000L
 class AlarmBroadcastReciever : BroadcastReceiver() {
@@ -30,8 +31,14 @@ class AlarmBroadcastReciever : BroadcastReceiver() {
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
 
+        val pebbleIntent = Intent("com.getpebble.action.SEND_NOTIFICATION")
+        pebbleIntent.putExtra("messageType", "PEBBLE_ALERT")
+        pebbleIntent.putExtra("notificationData", "[{\"title\":\"Survey\",\"body\":\"Survey time!\"}]")
+        context.sendBroadcast(pebbleIntent);
+
         with(NotificationManagerCompat.from(context)) {
             // notificationId is a unique int for each notification that you must define
+
             if (areNotificationsEnabled()) {
                 notify(1, builder.build())
             } else {
@@ -64,7 +71,7 @@ fun setAlarm(activity: Activity, isWakeup: Boolean) {
     } else {
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
         val period: Long = sharedPreferences.getString("ask_period", "4")!!.toLong() * MS_IN_HOUR
-        period + (random.nextGaussian() * 2.0/3.0 * period).toLong()
+        max(MS_IN_HOUR / 6L, period + (random.nextGaussian() / 3.0 * period).toLong())
     }
 
     alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeUntilAlarm, pendingIntent)
